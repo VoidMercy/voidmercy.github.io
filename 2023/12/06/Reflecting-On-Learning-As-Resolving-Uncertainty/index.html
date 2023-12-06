@@ -7,10 +7,10 @@
 
     
 
-    <title>Archives | Hexo</title>
+    <title>Reflecting On Learning As Resolving Uncertainty | Hexo</title>
     <meta name="author" content="John Doe" />
     <meta name="keywords" content="" />
-    <meta name="description" content="" />
+    <meta name="description" content="I recently took the course EE 277 taught by Professor Benjamin Van Roy, which was an excellent course. This course made me think deeply about what it means for a system to learn about an environment, how probability and statistics play a role in mode" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
     <meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no" />
 
@@ -74,6 +74,8 @@
 
         
         
+        
+        
 
         
         <div class="author-meta">
@@ -114,98 +116,35 @@
 
         <div id="content" class="content">
             <div id="wrapper" class="wrapper" style="max-width: 800px">
-                
-
-
+                <article class="article" itemscope itemprop="blogPost">
     
-    
-    
-    
-    
-    <section class="archives-wrap">
-    <div class="archive-year-wrap">
-    <a href="/archives/2023" class="page-hd">
-        2023
-    </a>
-    </div>
-    <ol class="archives">
-    
-
-    <li class="archive-section-item">
+    <header class="article-header">
         
-<article class="archive-article archive-type-post">
-    <div class="archive-article-inner">
-        <header class="archive-article-header">
-            <a class="archive-article-link" href="/2023/12/06/Reflecting-On-Learning-As-Resolving-Uncertainty/">Reflecting On Learning As Resolving Uncertainty</a>
-            <span class="archive-article-date">
-                (<a class="article-date" href="/archives/2023/12">
-    
-    <time class="vm" datetime="2023-12-06T08:52:32.000Z" itemprop="datePublished">12/6</time>
-</a>
-)
-            </span>
-        </header>
-    </div>
-</article>
-    </li>
-
-    
-    
-    
-    </ol></section>
-    
-    
-    
-    <section class="archives-wrap">
-    <div class="archive-year-wrap">
-    <a href="/archives/2020" class="page-hd">
-        2020
-    </a>
-    </div>
-    <ol class="archives">
-    
-
-    <li class="archive-section-item">
+        <h1 itemprop="name">
+            Reflecting On Learning As Resolving Uncertainty
+        </h1>
         
-<article class="archive-article archive-type-post">
-    <div class="archive-article-inner">
-        <header class="archive-article-header">
-            <a class="archive-article-link" href="/2020/07/31/Using-Ghidra-for-Automated-Struct-Identification/">Using Ghidra for Automated Struct Identification</a>
-            <span class="archive-article-date">
-                (<a class="article-date" href="/archives/2020/07">
+        <div class="article-meta clearfix">
+            <a class="article-date" href="https://voidmercy.github.io/2023/12/06/Reflecting-On-Learning-As-Resolving-Uncertainty/index.html">
     
-    <time class="vm" datetime="2020-07-31T21:41:46.000Z" itemprop="datePublished">7/31</time>
+    <i class="icon-calendar vm"></i>
+    
+    <time class="vm" datetime="2023-12-06T08:52:32.000Z" itemprop="datePublished">2023-12-06</time>
 </a>
-)
-            </span>
-        </header>
-    </div>
-</article>
-    </li>
 
-    
-    
+            
 
-    <li class="archive-section-item">
+        </div>
+    </header>
+    
+    <section class="article-body markdown-body">
         
-<article class="archive-article archive-type-post">
-    <div class="archive-article-inner">
-        <header class="archive-article-header">
-            <a class="archive-article-link" href="/2020/06/01/Hack-A-Sat-CTF-2020-Launch-Link/">Hack-A-Sat CTF 2020 - Launch Link</a>
-            <span class="archive-article-date">
-                (<a class="article-date" href="/archives/2020/06">
-    
-    <time class="vm" datetime="2020-06-02T06:27:49.000Z" itemprop="datePublished">6/1</time>
-</a>
-)
-            </span>
-        </header>
-    </div>
+        <p>I recently took the course <a target="_blank" rel="noopener" href="https://explorecourses.stanford.edu/search?q=EE+277&view=catalog&page=0&filter-coursestatus-Active=on&collapse=&academicYear=20232024">EE 277</a> taught by Professor Benjamin Van Roy, which was an excellent course. This course made me think deeply about what it means for a system to learn about an environment, how probability and statistics play a role in modeling environment and uncertainly, and how Bayesian statistics (conditional probabilities really) can form the basis of approximate algorithms to model posterier distributions of random variables. This post will highlight the key ideas introduced and reinforced in this course, and how these ideas might play a role in the future of ML along with my subjective opinions.</p>
+<p>Work in progress…</p>
+
+        
+    </section>
 </article>
-    </li>
-
-
-</ol></section>
 
 
 
@@ -213,6 +152,11 @@
             </div>
         </div>
 
+        
+            
+            <a id="pagenext" href="/2020/07/31/Using-Ghidra-for-Automated-Struct-Identification/" class="article-next" title="Using Ghidra for Automated Struct Identification"><i class="icon-arrow-right"></i></a>
+            
+            
         
 
         <footer class="footer">
@@ -276,6 +220,33 @@
         });
     });
     </script>
+    
+        
+<script src="/js/scrollspy.min.js"></script>
+
+        <script type="text/javascript">
+        $(document.body).scrollspy({target: '#aside-inner'});
+
+        $(window).on('resize', function() {
+            var hw = $('#header').width();
+            var ww = $('#wrapper').width();
+            var space = ($(this).width() - hw - ww) / 2 / 2;
+
+            var pageprev = $('#pageprev');
+            var pagenext = $('#pagenext');
+            var avg = (pageprev.width() + pagenext.width()) / 2
+
+            if(space > avg) {
+                var len = space - avg / 2;
+                var styles = {position: 'fixed', top: '50%', marginTop: - (pageprev.width() + pagenext.width()) / 4}
+                pageprev.css($.extend({left: hw + len}, styles));
+                pagenext.css($.extend({right: len}, styles));
+            } else {
+                pageprev.removeAttr('style');
+                pagenext.removeAttr('style');
+            }
+        }).trigger('resize');
+        </script>
     
 
 </body>
