@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8" />
+
+    
+
+    
+
+    <title>Hack-A-Sat CTF 2020 - Launch Link | Hexo</title>
+    <meta name="author" content="John Doe" />
+    <meta name="keywords" content="" />
+    <meta name="description" content="Data Link Layer Protocol Firmware Reversing and ExploitationHack-A-Sat CTF 2020 is a space security themed CTF that took place this past week, and it had some really great challenges. One of which is Launch Link, a reversing + pwn task which was solv" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+    <meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no" />
+
+    
+    <link rel="alternate" href="/atom.xml" title="Hexo" type="application/atom+xml">
+    
+    
+    <link rel="icon" href="/images/favicon.ico">
+    
+
+    <style type="text/css">
+    @font-face {
+        font-family: 'icomoon';
+        src: url("/fonts/icomoon.eot?q628ml");
+        src: url("/fonts/icomoon.eot?q628ml#iefix") format('embedded-opentype'),
+             url("/fonts/icomoon.ttf?q628ml") format('truetype'),
+             url("/fonts/icomoon.woff?q628ml") format('woff'),
+             url("/fonts/icomoon.svg?q628ml#icomoon") format('svg');
+        font-weight: normal;
+        font-style: normal;
+    }
+    </style>
+    
+<link rel="stylesheet" href="/css/style.css">
+
+
+    <!--[if lt IE 9]><style type="text/css">.nav-inner {top:0;}.author-meta {position:static;top:0;}.search-form {height:36px;}</style><script type="text/javascript" src="https://unpkg.com/html5shiv@3.7.3/dist/html5shiv.min.js"></script><![endif]-->
+<meta name="generator" content="Hexo 7.0.0"></head>
+<body>
+
+    <main class="app">
+        <header id="header" class="header clearfix">
+    <div id="nav" class="nav">
+    <div class="nav-mobile">
+        <button id="open-panel" class="open-panel nav-mobile-item"><i class="icon-documents"></i></button>
+        <h1 class="nav-mobile-title nav-mobile-item">Hexo</h1>
+        <button id="open-menus" class="open-panel nav-mobile-item"><i class="icon-library"></i></button>
+    </div>
+
+    <nav id="nav-inner" class="nav-inner">
+        
+            <a class="nav-item" href="/">
+                <span class="nav-text">Posts</span>
+            </a>
+        
+            <a class="nav-item" href="/about">
+                <span class="nav-text">About</span>
+            </a>
+        
+            <a class="nav-item" href="/contact">
+                <span class="nav-text">Contact</span>
+            </a>
+        
+    </nav>
+</div>
+
+    <aside id="aside" class="aside">
+    <div id="aside-mask" class="aside-mask"></div>
+    <div id="aside-inner" class="aside-inner">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit"><i class="icon-search-stroke"></i></button><input type="hidden" name="sitesearch" value="https://voidmercy.github.io"></form>
+
+        
+        
+        
+        
+
+        
+        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#Data-Link-Layer-Protocol-Firmware-Reversing-and-Exploitation"><span class="toc-number">1.</span> <span class="toc-text">Data Link Layer Protocol Firmware Reversing and Exploitation</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Challenge-Description"><span class="toc-number">2.</span> <span class="toc-text">Challenge Description</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Overview"><span class="toc-number">3.</span> <span class="toc-text">Overview</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Reverse-Engineering"><span class="toc-number">4.</span> <span class="toc-text">Reverse Engineering</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Vulnerability"><span class="toc-number">5.</span> <span class="toc-text">Vulnerability</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Debugging"><span class="toc-number">6.</span> <span class="toc-text">Debugging</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Exploitation"><span class="toc-number">7.</span> <span class="toc-text">Exploitation</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Afterthoughts"><span class="toc-number">8.</span> <span class="toc-text">Afterthoughts</span></a></li></ol>
+        
+    </div>
+</aside>
+
+</header>
+
+        <div id="content" class="content">
+            <div id="wrapper" class="wrapper" style="max-width: 800px">
+                <article class="article" itemscope itemprop="blogPost">
+    
+    <header class="article-header">
+        
+        <h1 itemprop="name">
+            Hack-A-Sat CTF 2020 - Launch Link
+        </h1>
+        
+        <div class="article-meta clearfix">
+            <a class="article-date" href="https://voidmercy.github.io/2020/06/01/Hack-A-Sat-CTF-2020-Launch-Link/index.html">
+    
+    <i class="icon-calendar vm"></i>
+    
+    <time class="vm" datetime="2020-06-02T06:27:49.000Z" itemprop="datePublished">2020-06-01</time>
+</a>
+
+            
+
+        </div>
+    </header>
+    
+    <section class="article-body markdown-body">
+        
+        <h2 id="Data-Link-Layer-Protocol-Firmware-Reversing-and-Exploitation"><a href="#Data-Link-Layer-Protocol-Firmware-Reversing-and-Exploitation" class="headerlink" title="Data Link Layer Protocol Firmware Reversing and Exploitation"></a>Data Link Layer Protocol Firmware Reversing and Exploitation</h2><p>Hack-A-Sat CTF 2020 is a space security themed CTF that took place this past week, and it had some really great challenges. One of which is Launch Link, a reversing + pwn task which was solved by only one team during the competition.</p>
+<p>We (<a target="_blank" rel="noopener" href="https://twitter.com/_voidmercy">VoidMercy</a> and <a target="_blank" rel="noopener" href="https://twitter.com/ret2jazzy">Jazzy</a>) spent around 15 hours during the CTF reversing the firmware, but gave up around 6 hours before the end due to sleep deprivation and other unsolved easy challenges. However, we came back afterwards and managed to solve it with around 5-6 more hours of work. </p>
+<p>In hindsight, we should have kept working on the challenge.</p>
+<span id="more"></span>
+
+<h2 id="Challenge-Description"><a href="#Challenge-Description" class="headerlink" title="Challenge Description"></a>Challenge Description</h2><p>Our team managed to download off an open FTP server from LaunchDotCom’s website and found some interesting documents about their upcoming Satellte Internet service. We’ve figured out how to communicate over the RF link but we need your help to figure out how to exploit the baseband processor on the satellite.</p>
+<p>We’ve managed to download the firmware for the baseband processor of the payload module from the open FTP server.</p>
+<p>It appears they graciously left an emulator on their public FTP server for debugging their platform, we have provided that as well. Our team has determined that the target system uses 2MB of RAM and to run the emulator use the following command line:</p>
+<figure class="highlight markdown"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">vmips -o memsize=2097152 firmware.bin</span><br></pre></td></tr></table></figure>
+
+<p>Our team would like to access sensitive data located 0xa2008000 on the running system.</p>
+<p>Good Luck!</p>
+<h2 id="Overview"><a href="#Overview" class="headerlink" title="Overview"></a>Overview</h2><p><img src="/static/20200508/img1.png"></p>
+<p>The challenge includes a ROM file and a binary <code>vmips</code>. As the name states, it’s most likely an emulator for MIPS. </p>
+<p>In fact, it turns out that the vmips binary is a modified <a target="_blank" rel="noopener" href="http://vmips.sourceforge.net/">vmips</a> emulator. In comparision, there were a few changes (which we will get to in the reversing), the most prominent one is adding a custom <code>Flag</code> device. </p>
+<p>Instead of exploiting vmips, our target is most likely to exploit the emulated ROM and interface with the Flag device to read the flag. Now let’s start the reversing… </p>
+<h2 id="Reverse-Engineering"><a href="#Reverse-Engineering" class="headerlink" title="Reverse Engineering"></a>Reverse Engineering</h2><p>After reading a little bit about vmips, we discover that the ROM file is a mipsel (32 bit MIPS little endian) blob whose entry point is at physical offset 0x0, mapped at a virtual address 0xbfc00000. </p>
+<p>As expected with firmware ROMs, the binary is completely stripped, so we will have to create segments, rename variables, and create structs ourselves, which is the most time consuming portion of this challenge. With this information, we can fire up our favourite disassembler and begin reversing.</p>
+<p>Instead of using IDA as we normally would, we decided to opt for Ghidra due to it’s superior support for MIPS. As no-one in our team doesn’t knew a whole lot about Ghidra, we thought it would be good chance to learn the UI, shortucts, and features. </p>
+<p>Like IDA, when loading a binary, you must select the processor architecture and the base address at which the binary is loaded at. In this case, the binary is a mips-default-little-32 architecture, loaded at 0xbfc00000.</p>
+<p>+1 to Ghidra for decompiling MIPS. At the entry point, we see the following pseudocode:</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">puVar4 = (undefined4 *)&amp;DAT_bfc08ef8; <span class="comment">// 0xbfc08ef8 - Src buffer</span></span><br><span class="line">puVar7 = &amp;_gp_1; <span class="comment">// 0xa0180000 - Destination buffer</span></span><br><span class="line"><span class="keyword">do</span> &#123;</span><br><span class="line">  *puVar7 = *puVar4;</span><br><span class="line">  puVar4 = puVar4 + <span class="number">1</span>;</span><br><span class="line">  puVar7 = puVar7 + <span class="number">1</span>;</span><br><span class="line">&#125; <span class="keyword">while</span> (puVar4 != (undefined4 *)<span class="number">0xbfc09c8c</span>); <span class="comment">// Copy loop</span></span><br><span class="line">uVar9 = <span class="number">0xbfc00510</span>;</span><br><span class="line">main_logic(); <span class="comment">// Main func</span></span><br></pre></td></tr></table></figure>
+
+<p>An important step for firmware and embedded binaries in general is to set-up segments, which is exactly what the binary is doing here. </p>
+<p>This loop is copying data from the ROM, starting from address 0xbfc08ef8 to 0xbfc09c8c, to another address - 0xa0180000. Later, we see that data from 0xa0180000 is continously referenced, so we can reasonably deduce that it’s the RAM&#x2F;data segment being intialized.</p>
+<p>After identifying RAM, we have to tell Ghidra where RAM is located so that Ghidra’s code analysis will be able to resolve addresses and strings. This is doable through Ghidra’s Memory Map window, where we can create a new RAM segment, and initialize its data with data at an offset in the ROM.</p>
+<p><img src="/static/20200508/img2.png"></p>
+<p>Next, we can begin digging into the main logic of the binary. A quick way to gain the big picture of what a binary is doing is through examining strings. With the RAM segment set-up, we can see numerous calls in the code similar to this:</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">debug_print(<span class="number">4</span>,s_MAC::Process_a0180b70);</span><br></pre></td></tr></table></figure>
+
+<p>Some of the strings we see include:</p>
+<figure class="highlight markdown"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">MAC::Process</span><br><span class="line">MAC::UL DATA<span class="emphasis">_BLOCK Invalid CRC-16</span></span><br><span class="line"><span class="emphasis">RLL::Radio Link Layer Process (UL/DL processing)</span></span><br><span class="line"><span class="emphasis">RLL::UL MAC PDU</span></span><br><span class="line"><span class="emphasis">RLL::Radio Resource Layer Process (UL/DL processing)</span></span><br><span class="line"><span class="emphasis">RRL:: AP SETUP REQUEST CREATED NEW AP[%u]</span></span><br></pre></td></tr></table></figure>
+
+<p>With these strings, we can do a little bit of recon to find <a target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/Medium_access_control">this</a> or <a target="_blank" rel="noopener" href="https://www.nutaq.com/blog/overview-telecom-wireless-protocol-stack-layers">this</a>. These articles tell us that we are dealing with a telecommunication protocol at the medium access control layer - which is part of the data link layer. </p>
+<p>The role of the data link layer is to transfer data between the network layer and the physical layer, where the network layer consists of incoming packet data and the physical layer is the baremetal device the firmware is running on top of. After packets are parsed, the RRC performs actions with the data.</p>
+<p>Additionally, we can see references to strings referencing AP’s, access points. We can reasonable guess that the RRC will be handling AP creation, deletion, and similar.</p>
+<p>Next, we begin reversing the bulk of the code. The most difficult task when reversing this binary was by far the struct identification. </p>
+<p>+1 again to Ghidra’s struct editor, which provides a very nice interface. There was a total of 9 structs created, some of which had a lot struct members. One of which is shown below:</p>
+<p><img src="/static/20200508/img4.png"></p>
+<p>Each and every member of the struct’s function have to be reverse engineered and given an appropriate name, which was very time consuming. Consequently, once the structs are identified, the binary becomes simple to understand.</p>
+<p>After a hefty 20 or so hours of staring at Ghidra, we understood the code in full. The main logic is shown below</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">void</span> <span class="title function_">main_logic</span><span class="params">(<span class="type">void</span>)</span> &#123;</span><br><span class="line">  msg_node **str2_00;</span><br><span class="line">  <span class="type">char</span> local_1300 [<span class="number">4120</span>];</span><br><span class="line">  mac_struct important1;</span><br><span class="line">  radio_link_struct important2;</span><br><span class="line">  pdu_struct important3;</span><br><span class="line">  msg_node *str5;</span><br><span class="line">  msg_node *str4;</span><br><span class="line">  msg_node *str3;</span><br><span class="line">  msg_node *str2;</span><br><span class="line">  msg_node *str1;</span><br><span class="line">  </span><br><span class="line">  <span class="comment">// Global data initialization</span></span><br><span class="line">  FUN_bfc08ba8(local_1300);</span><br><span class="line">  communication_buffer = local_1300;</span><br><span class="line">  init_prng();</span><br><span class="line">  <span class="comment">//set debug prints to 0, more explanation in the debugging section</span></span><br><span class="line">  set_debug(<span class="number">0</span>);</span><br><span class="line">  <span class="comment">// Initializing communication linked lists</span></span><br><span class="line">  create_head((msg_node *)&amp;str1,s_UL:_MACRLL_a0180d3c);</span><br><span class="line">  create_head((msg_node *)&amp;str2,s_UL:_RLLRRL_a0180d48);</span><br><span class="line">  create_head((msg_node *)&amp;str3,s_DL:_RRLRLL_a0180d54);</span><br><span class="line">  create_head((msg_node *)&amp;str4,s_DL:_RLLMAC_a0180d60);</span><br><span class="line">  create_head((msg_node *)&amp;str5,s_GLOBAL_a0180d6c);</span><br><span class="line">  <span class="comment">// Initialize MAC Layer, Radio Link Layer, Radio Resource Control Layer structs</span></span><br><span class="line">  make_struct(&amp;important1,&amp;str1,&amp;str4,(msg_node *)&amp;str5,communication_buffer);</span><br><span class="line">  make_struct2(&amp;important2,&amp;str1,&amp;str2,&amp;str4,(msg_node *)&amp;str3,(msg_node *)&amp;str5);</span><br><span class="line">  str2_00 = &amp;str2;</span><br><span class="line">  make_struct3(&amp;important3,str2_00,(msg_node *)&amp;str3,(msg_node *)&amp;str5);</span><br><span class="line">  setup_timer1(&amp;important1,str2_00,<span class="number">0</span>,<span class="number">0</span>);</span><br><span class="line">  setup_timer2(&amp;important2,str2_00,<span class="number">0</span>,<span class="number">0</span>);</span><br><span class="line">  <span class="keyword">do</span> &#123;</span><br><span class="line">    mac_receive(&amp;important1); <span class="comment">// MAC Processing</span></span><br><span class="line">    radio_link_layer(&amp;important2); <span class="comment">// Radio Link Layer</span></span><br><span class="line">    process_resource(&amp;important3); <span class="comment">// Radio Resource Control Layer</span></span><br><span class="line">  &#125; <span class="keyword">while</span>( <span class="literal">true</span> );</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>The binary consists of three main “layers” - the MAC Receive Layer, the Radio Link Layer, and the Radio Resource Process layer. I will be referring to these as layers 1, 2, 3 respectively. </p>
+<p>Layers 1 and 2 communicate with each other through a msg_node* linked list. Similarly, layers 2 and 3 do the same. The second RLL layer is the glue between the first and third layer, handling the interlayer communication continously. </p>
+<p>User input is, as expected, sent to the MAC Receive layer. It is then parsed, some packet metadata stripped, then a packet is sent to the Radio Link Layer with data. The Radio Link Layer then handles encryption&#x2F;decryption of packets (if necessary), and constructs a packet that is sent to the third layer. </p>
+<p>The Radio Resource layer then takes the data, interprets some metadata, and performs AP creation, deletion, and lookups. These packet metadata have opcodes that is then interpreted by each layer to perform a different functionality. A diagram with all of the opcodes and functionalities is shown below.</p>
+<p><img src="/static/20200508/img5.png"></p>
+<p>The packet sent by us, the attackers, include a packet opcode, CRC16 of the data, and the data itself which contains more packet metadata used by the third layer. For certain opcodes, the RLL encrypts our data, so we need to figure out how the encryption works to communicate with the third layer.</p>
+<p>The cryptography works by first having the user send the only unencrypted packet opcode, with opcode 0x17 for the third layer. This initializes crypto keys, and two IV’s using PRNG. The two IV’s are used for encryption between layers 1&lt;-&gt;2 and 2&lt;-&gt;3.</p>
+<p>The encryption algorithm is <a target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/XTEA">XTEA</a> in decoder mode with the IV serving as a CTR, generating an xor keystream. Since all the transactions are deterministic, we can simply extract the key and IV, and recreate the xor keystream ourselves to encrypt messages to send.</p>
+<p>Now that the binary is reversed, we can begin searching for the vulnerability.</p>
+<h2 id="Vulnerability"><a href="#Vulnerability" class="headerlink" title="Vulnerability"></a>Vulnerability</h2><p>It turns out we were extremely unlucky during the reverse engineering process. While reversing, we skipped around the binary, prioritizing routines that looked simple. Additionally, we were biased towards layer 3, which is where you would expect the vulnerability to be. </p>
+<p>However after spending a lot of time looking at the third layer and reversing its Access Point structs and failing to spot the vulnerability, we finally decided to finish reversing the final struct and opcodes of the program in the second layer.</p>
+<p>The opcode 0x73 sent from layer 2 to layer 3 consists of a lot of PDU (Protocol Data Unit) structs that we neglected until the end. This routine stores packets sent from the MAC Layer until the packets ID’s that are sent are contiguous, meaning that all of the packets have been received and are ready to be sent to layer 3. This is how the Radio Link Layer handles sending data larger than the packet size supported by the MAC Layer.</p>
+<p>The bug is a stack buffer overflow vulnerability when the maximum packet size (0xc0) from the MAC Layer is used to send the maximum number of packets (16) for the Radio Link Layer. </p>
+<p>The Radio Link Layer takes these packets, merges them, then applies the XTEA XOR keystream decryption to it. However, the decrypted buffer is not large enough to contain all of this data, leading to a stack buffer overflow. The vulnerable code is shown below:</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line">undefined4</span><br><span class="line"><span class="title function_">copy_data</span><span class="params">(pdu_data_packet *pdu_data_struct,<span class="type">char</span>* dest,uint max_length,undefined2 *size_of_dec)</span> &#123;</span><br><span class="line">  uint sig;</span><br><span class="line">  undefined4 uVar1;</span><br><span class="line">  <span class="type">char</span> *curchar;</span><br><span class="line">  <span class="type">char</span> **buf_ptr;</span><br><span class="line">  <span class="type">int</span> size;</span><br><span class="line">  </span><br><span class="line">  sig = get_signature(pdu_data_struct);</span><br><span class="line">  uVar1 = <span class="number">0</span>;</span><br><span class="line">  <span class="keyword">if</span> (sig &lt;= max_length) &#123; <span class="comment">// Faulty check for length</span></span><br><span class="line">    buf_ptr = pdu_data_struct-&gt;buf_start;</span><br><span class="line">    size = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">do</span> &#123;</span><br><span class="line">      curchar = *buf_ptr;</span><br><span class="line">      <span class="keyword">if</span> (curchar != <span class="number">0x0</span>) &#123;</span><br><span class="line">        <span class="built_in">memcpy</span>(&amp;dest[size], *(<span class="type">char</span> **)curchar, (uint) curchar[<span class="number">4</span>]); <span class="comment">// Copy data into stack buffer</span></span><br><span class="line">        size = size + (uint) (*buf_ptr)[<span class="number">4</span>]; <span class="comment">// Size is not bounds checked</span></span><br><span class="line">      &#125;</span><br><span class="line">      buf_ptr = buf_ptr + <span class="number">1</span>;</span><br><span class="line">      uVar1 = <span class="number">1</span>;</span><br><span class="line">    &#125; <span class="keyword">while</span> (buf_ptr != (<span class="type">char</span> **)&amp;pdu_data_struct-&gt;sn_num); <span class="comment">// Iterate through each separate packet</span></span><br><span class="line">    *size_of_dec = (<span class="type">short</span>)size;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">return</span> uVar1;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>Now we can then proceed to exploitation. But before that, we have to set-up a debug environment, which turned out to be surprisingly annoying.</p>
+<h2 id="Debugging"><a href="#Debugging" class="headerlink" title="Debugging"></a>Debugging</h2><p>Remember the <code>debug_print</code> function shown at the start? It was being called multiple times every iteration with juicy debug info (that would help us in exploit dev) but nothing was ever getting printed. Wouldn’t it be nice to get it working?</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">int</span> <span class="title function_">debug_print</span><span class="params">(<span class="type">int</span> fd,undefined *fmt,...)</span> &#123;</span><br><span class="line">  undefined4 in_a2;</span><br><span class="line">  undefined4 in_a3;</span><br><span class="line">  <span class="type">int</span> iVar1;</span><br><span class="line">  undefined4 local_res8;</span><br><span class="line">  undefined4 local_resc;</span><br><span class="line">  <span class="type">char</span> acStack1040 [<span class="number">1024</span>];</span><br><span class="line">  undefined4 *local_10;</span><br><span class="line">  </span><br><span class="line">  local_10 = &amp;local_res8;</span><br><span class="line">  iVar1 = <span class="number">0</span>;</span><br><span class="line">  <span class="keyword">if</span> ((fd &amp; X_global_var) != <span class="number">0</span>) &#123; <span class="comment">// Global debug flag</span></span><br><span class="line">    local_res8 = in_a2;</span><br><span class="line">    local_resc = in_a3;</span><br><span class="line">    iVar1 = __vsnprintf_internal(acStack1040);</span><br><span class="line">    printf2(s_DEBUG::%s_a0180418,acStack1040); <span class="comment">// Do debug print</span></span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">return</span> iVar1;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>From the code, it can been seen that the debug print will only work if the <code>X_global_var</code> is not 0. Tracing the cross references, it is being set to 0 right after initialization. This is why there was no debug output.</p>
+<p>Patching this was easy as replacing the <code>beq</code> (branch if equal) at 0xbfc01808 to <code>bne</code> (branch if not equal), essentially inverting the logic.</p>
+<p><img src="/static/20200508/debug_print3.png"></p>
+<p>Running the ROM again, we are blasted with debug prints.</p>
+<p><img src="/static/20200508/debug_print1.png"></p>
+<p>Although it was nice to get these working, they are still just the built-in debug prints. To aid in exploit writing, a somewhat more sophisticated debug setup is required. </p>
+<p>By default, vmips ships with gdbserver support. However the implementation is very broken and the protocols differ between GDB versions, so we couldn’t work with it.</p>
+<p>Instead of fixing the gdbserver, we decided to go in a completely different direction and use the internal tracing mechanism of vmips. </p>
+<p>Passing the parameter <code>-o instdump</code> to vmips would make it log every instruction to stderr, which could be used to trace exactly how the execution progressed and what branches were taken. </p>
+<p>Theoretically, that sounds pretty good. But one big issue was that this made the emulator insanely slow as writing to stderr after every instruction was a huge overhead. </p>
+<p>Even after running for 5+ minutes, it didn’t even complete the initial copy loop, therefore rendering it useless for our purpose.</p>
+<p>Another mechanism was <code>-o tracing</code> where we could provide the <code>tracestartpc</code> (start tracing PC) and <code>tracestartpc</code> (end tracing PC), essentially only tracing the instructions between those two addresses. Unfortunately, it didn’t work.  </p>
+<p>Looking into the vmips source code, the <code>CPU::open_trace_file()</code> was broken.</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="type">void</span></span></span><br><span class="line"><span class="function"><span class="title">CPU::open_trace_file</span> <span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">  <span class="type">char</span> tracefilename[<span class="number">80</span>];</span><br><span class="line">  <span class="keyword">for</span> (<span class="type">unsigned</span> i = <span class="number">0</span>; ; ++i) &#123;</span><br><span class="line">    <span class="built_in">sprintf</span> (tracefilename, <span class="string">&quot;traceout%d.txt&quot;</span>, i);</span><br><span class="line">    <span class="keyword">if</span> (!<span class="built_in">can_read_file</span> (tracefilename))</span><br><span class="line">      <span class="keyword">break</span>;</span><br><span class="line">  &#125;</span><br><span class="line">  traceout = <span class="built_in">fopen</span> (tracefilename, <span class="string">&quot;w&quot;</span>);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">bool</span> <span class="title">can_read_file</span> <span class="params">(<span class="type">char</span> *filename)</span> </span>&#123;</span><br><span class="line">  <span class="built_in">assert</span> (filename &amp;&amp; <span class="string">&quot;Null pointer passed to can_read_file ()&quot;</span>);</span><br><span class="line">  FILE *f = <span class="built_in">fopen</span> (filename, <span class="string">&quot;r&quot;</span>);</span><br><span class="line">  <span class="keyword">if</span> (!f)</span><br><span class="line">    <span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">  <span class="built_in">fclose</span> (f);</span><br><span class="line">  <span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>Basically, it’s expecting the <code>can_read_file()</code> to return false if the file is readable whereas the opposite happens. So the <code>tracing</code> argument just puts the emulator in an infinite loop. </p>
+<p>Again, we patched this and got tracing to work. We could now see what addresses it executed and what branches it took. We are slowly making progress…</p>
+<p>Another argument we could pass was <code>-o dumpcpu</code>, which would dump the CPU state (registers and stack) at every instruction, but that didn’t work either. Later, we realized that they had a custom <code>run_fast()</code> function in vmips which would skip over the <code>vmips::dump_cpu_info()</code> function call. </p>
+<p>So instead of relying on only the internal vmips mechanism, we decided to write a custom patch ourselves which would dump the CPU state at a targeted instruction.  </p>
+<p>A patch like that would be large and impossible to fit in the binary, but this was our time to shine. We developed an ELF Patching library (ELFPatch) last year (planning to open-source soon) and this was the perfect scenario to use it.  </p>
+<p>The plan was to hook <code>vmips::step()</code> and call <code>CPU::dump_regs()</code> function if we are at the right instruction. Here is how it looked in code:</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> ELFPatch <span class="keyword">import</span> ELFPatch </span><br><span class="line"></span><br><span class="line">f = ELFPatch(<span class="string">&quot;./vmips&quot;</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment">#patch at 0x1fbdd in vmips::step()</span></span><br><span class="line">new_patch = f.new_patch(virtual_address=<span class="number">0x1fbdd</span>, size=<span class="number">0x200</span>, append_original_instructions=<span class="literal">True</span>, append_jump_back=<span class="literal">True</span>)</span><br><span class="line"></span><br><span class="line">new_patch.update_patch(f.assembler.assemble(<span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">push_regs:    ; save registers to stack</span></span><br><span class="line"><span class="string">push rax</span></span><br><span class="line"><span class="string">push rbx</span></span><br><span class="line"><span class="string">...</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">do_stuff:</span></span><br><span class="line"><span class="string">mov rdi, QWORD PTR [r14+0x10]   ; the CPU member</span></span><br><span class="line"><span class="string">mov rcx, rdi</span></span><br><span class="line"><span class="string">add rcx, 344</span></span><br><span class="line"><span class="string">mov ecx, DWORD PTR [rcx]        ; load the PC (instruction pointer)</span></span><br><span class="line"><span class="string">cmp ecx, 0xa00fe77c             ; compare to a hardcoded value</span></span><br><span class="line"><span class="string">jne end                         ; continue normal execution if PC is not what we want</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">lea rsi, [0x245600]            ; load stderr</span></span><br><span class="line"><span class="string">mov rsi, QWORD PTR [rsi]</span></span><br><span class="line"><span class="string">call 0x15030                   ;call CPU::dump_regs() with stderr</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">end:</span></span><br><span class="line"><span class="string">pop_regs:   ; restore saved registers</span></span><br><span class="line"><span class="string">pop r15</span></span><br><span class="line"><span class="string">pop r14</span></span><br><span class="line"><span class="string">pop r13</span></span><br><span class="line"><span class="string">...</span></span><br><span class="line"><span class="string">&quot;&quot;&quot;</span>,offset=new_patch.chunk.virtual_address))</span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;New Patch at&quot;</span>, <span class="built_in">hex</span>(new_patch.chunk.virtual_address))</span><br><span class="line">f.write_file(<span class="string">&quot;./vmips_patched&quot;</span>)</span><br></pre></td></tr></table></figure>
+
+<p>YEEET, now we could print the full CPU state at any instruction. This was good enough for us to start developing an exploit.</p>
+<p><img src="/static/20200508/debug_print2.png"></p>
+<h2 id="Exploitation"><a href="#Exploitation" class="headerlink" title="Exploitation"></a>Exploitation</h2><p>First we have to trigger the bug. To trigger the overflow, we have to specify the packet ID that we are constructing through the SN num, which is the lsb of the second byte. </p>
+<p>Once contiguous SN nums are filled up, the packet is then decrypted and placed onto a buffer on the stack, which triggers the overflow. So, we can begin sending packest starting from the last SN num - 16.</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">res.append(message_block(<span class="string">b&quot;\x73\x0f\x80\x23&quot;</span> + <span class="string">b&quot;A&quot;</span>*<span class="number">0xb9</span>))</span><br><span class="line">res.append(message_block(<span class="string">b&quot;\x73\x0e\x80\x23&quot;</span> + <span class="string">b&quot;A&quot;</span>*<span class="number">0xb9</span>))</span><br><span class="line">res.append(message_block(<span class="string">b&quot;\x73\x0d\x80\x23&quot;</span> + <span class="string">b&quot;A&quot;</span>*<span class="number">0xb9</span>))</span><br><span class="line">res.append(message_block(<span class="string">b&quot;\x73\x0c\x80\x23&quot;</span> + <span class="string">b&quot;A&quot;</span>*<span class="number">0xb9</span>))</span><br><span class="line">res.append(message_block(<span class="string">b&quot;\x73\x0b\x80\x23&quot;</span> + <span class="string">b&quot;A&quot;</span>*<span class="number">0xb9</span>))</span><br><span class="line">res.append(message_block(<span class="string">b&quot;\x73\x0a\x80\x23&quot;</span> + <span class="string">b&quot;A&quot;</span>*<span class="number">0xb9</span>))</span><br><span class="line">res.append(message_block(<span class="string">b&quot;\x73\x09\x80\x23&quot;</span> + <span class="string">b&quot;A&quot;</span>*<span class="number">0xb9</span>))</span><br><span class="line">res.append(message_block(<span class="string">b&quot;\x73\x08\x80\x23&quot;</span> + <span class="string">b&quot;A&quot;</span>*<span class="number">0xb9</span>))</span><br><span class="line">res.append(message_block(<span class="string">b&quot;\x73\x07\x80\x23&quot;</span> + <span class="string">b&quot;A&quot;</span>*<span class="number">0xb9</span>))</span><br><span class="line">res.append(message_block(<span class="string">b&quot;\x73\x06\x80\x23&quot;</span> + <span class="string">b&quot;A&quot;</span>*<span class="number">0xb9</span>))</span><br><span class="line">res.append(message_block(<span class="string">b&quot;\x73\x05\x80\x23&quot;</span> + <span class="string">b&quot;A&quot;</span>*<span class="number">0xb9</span>))</span><br><span class="line">res.append(message_block(<span class="string">b&quot;\x73\x04\x80\x23&quot;</span> + <span class="string">b&quot;A&quot;</span>*<span class="number">0xb9</span>))</span><br><span class="line">res.append(message_block(<span class="string">b&quot;\x73\x03\x80\x23&quot;</span> + <span class="string">b&quot;A&quot;</span>*<span class="number">0xb9</span>))</span><br><span class="line">res.append(message_block(<span class="string">b&quot;\x73\x02\x80\x23&quot;</span> + <span class="string">b&quot;A&quot;</span>*<span class="number">0xb9</span>))</span><br><span class="line">res.append(message_block(<span class="string">b&quot;\x73\x01\x80\x23&quot;</span> + <span class="string">b&quot;A&quot;</span>*<span class="number">0xb9</span>))</span><br></pre></td></tr></table></figure>
+
+<p>And we get:</p>
+<p><img src="/static/20200508/rip.png"></p>
+<p>Segfault at 0x41414141! That’s what we like to see.</p>
+<p>Since we are exploiting a firmware ROM and usually firmwares lack any sort of mitigations such as canaries and NX, maybe this does too?</p>
+<p>Indeed, vmips doesn’t support any fancy mitigations, so we can directly overwrite the return address and achieve PC control. The question is then, what do we overwrite the return address with?</p>
+<p>Using ROP may have been a valid option, but since there are essentially no memory protections, we could just get shellcode execution. </p>
+<p>Therefore, we opted to leak the deterministic stack address of our buffer data through debugging, and jump there to gain full code execution. </p>
+<p>As we jumped to the stack, the emulator died. We guessed that the emulator’s stack is specially treated as it is not mapped by the firmware ROM itself, so we instead tried jumping to our buffer in RAM and sure enough…</p>
+<p><img src="/static/20200508/inf.png"></p>
+<p>Our test shellcode that runs in an infinite loop works!</p>
+<p>Now all that’s left is to write shellcode that iterates through the flag device location 0xa2008000 in intervals of 4 and writes that data to the communication buffer between the vmips emulator and the user.</p>
+<p><img src="/static/20200508/shellcode.png"></p>
+<p>Aaaand let’s test it on remote.</p>
+<p><img src="/static/20200508/win.png"></p>
+<p>PWNED!!</p>
+<p>The final exploit is available <a target="_blank" rel="noopener" href="https://github.com/perfectblue/ctf-writeups/blob/master/2020/Hack-A-Sat-Quals/Launch-Link/solve.py">here</a></p>
+<h2 id="Afterthoughts"><a href="#Afterthoughts" class="headerlink" title="Afterthoughts"></a>Afterthoughts</h2><p>Now that we look over our whole process again, here are a few things we learned and what we could have done better:</p>
+<ul>
+<li>Ghidra is amazing for reversing non-mainstream architectures with an awesome collaboration setup - we will definitely be using it more from now on.</li>
+<li>We shouldn’t have given up at the end. If only we had spent a little more time reversing, we might have solved it during the CTF timeframe.</li>
+<li>Familiarity with good tools is a priceless asset during a competition. Without Ghidra’s decompilation, we would have never finished reversing this binary, and without ELFPatch, we would have spent a lot more time setting up debugging.</li>
+</ul>
+<p>Overall, we learned a lot from the challenge. From reversing a completely stripped binary blob to understanding the three layered data link protocol, it had everything. </p>
+<p>Thank you for reading and a big shoutout to Hack-A-Sat organizers for designing such an interesting challenge. </p>
+<p>For any questions&#x2F;clarifications, you can contact either <a target="_blank" rel="noopener" href="https://twitter.com/_VoidMercy">VoidMercy</a> or <a target="_blank" rel="noopener" href="https://twitter.com/ret2jazzy">Jazzy</a>. </p>
+
+        
+    </section>
+</article>
+
+
+
+
+            </div>
+        </div>
+
+        
+            
+            
+            <a id="pageprev" href="/2020/07/31/Using-Ghidra-for-Automated-Struct-Identification/" class="article-prev" title="Using Ghidra for Automated Struct Identification"><i class="icon-arrow-left"></i></a>
+            
+        
+
+        <footer class="footer">
+    Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>, Theme by <a href="https://github.com/sanonz/hexo-theme-concise" target="_blank">Concise</a>
+
+    
+</footer>
+
+    </main>
+
+    <script type="text/javascript" src="https://unpkg.com/jquery@1.9.1/jquery.min.js"></script>
+    <script type="text/javascript">
+    $(function() {
+        var nodes = {
+            nav: $('#nav'),
+            aside: $('#aside'),
+            asideInner: $('#aside-inner'),
+            navInner: $('#nav-inner')
+        };
+
+        var doing = false;
+        nodes.asideInner.on('webkitAnimationEnd mozAnimationEnd oAnimationEnd oanimationend animationend', function() {
+            if (nodes.aside.hasClass('mobile-open')) {
+                nodes.aside.removeClass('mobile-open');
+            } else {
+                nodes.aside.removeClass('mobile-close panel-show');
+            }
+            doing = false;
+        });
+        $('#open-panel, #aside-mask').on('click', function() {
+            if (doing) {
+                return;
+            }
+
+            if (nodes.aside.hasClass('panel-show')) {
+                nodes.aside.addClass('mobile-close');
+            } else {
+                nodes.aside.addClass('mobile-open panel-show');
+            }
+        });
+        $('#open-menus').on('click', function() {
+            nodes.navInner.slideToggle('normal', slideDone);
+        });
+
+        if (window.innerWidth <= 960) {
+            setTimeout(function() {
+                nodes.navInner.slideUp('normal', slideDone);
+            }, 3000);
+        }
+
+        function slideDone() {
+            if (nodes.navInner.css('display') !== 'none') {
+                nodes.navInner.css('display', '');
+            }
+        }
+
+        $(window).on('resize', function() {
+            if ($(this).width() > 960) {
+                nodes.navInner.css('display', '');
+            }
+        });
+    });
+    </script>
+    
+        
+<script src="/js/scrollspy.min.js"></script>
+
+        <script type="text/javascript">
+        $(document.body).scrollspy({target: '#aside-inner'});
+
+        $(window).on('resize', function() {
+            var hw = $('#header').width();
+            var ww = $('#wrapper').width();
+            var space = ($(this).width() - hw - ww) / 2 / 2;
+
+            var pageprev = $('#pageprev');
+            var pagenext = $('#pagenext');
+            var avg = (pageprev.width() + pagenext.width()) / 2
+
+            if(space > avg) {
+                var len = space - avg / 2;
+                var styles = {position: 'fixed', top: '50%', marginTop: - (pageprev.width() + pagenext.width()) / 4}
+                pageprev.css($.extend({left: hw + len}, styles));
+                pagenext.css($.extend({right: len}, styles));
+            } else {
+                pageprev.removeAttr('style');
+                pagenext.removeAttr('style');
+            }
+        }).trigger('resize');
+        </script>
+    
+
+</body>
+</html>
